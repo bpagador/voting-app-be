@@ -60,4 +60,23 @@ describe('voting-app-be routes', () => {
         });
       });
   });
+
+  it('can get all the organizations via GET', () => {
+    return Organization.create({
+      name: 'Redistribution United',
+      title: 'community organization',
+      description: 'defunds police and invests in schools and hospitals',
+      imageURL: 'image2.com'
+    })
+      .then(() => request(app).get('/api/v1/organizations'))
+      .then(res => {
+        expect(res.body).toEqual([{
+          _id: expect.anything(),
+          title: 'community organization',
+          imageURL: 'image2.com'
+        }]);
+      });
+  });
+
+  // it('gets an organization by id bia GET')
 });
