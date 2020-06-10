@@ -6,8 +6,8 @@ const connect = require('../lib/utils/connect');
 const request = require('supertest');
 const app = require('../lib/app');
 
-// const Poll = require('../lib/models/Poll');
-// const Organization = require('../lib/models/Organization');
+const Poll = require('../lib/models/Poll');
+const Organization = require('../lib/models/Organization');
 
 
 describe('poll routes', () => {
@@ -44,25 +44,8 @@ describe('poll routes', () => {
       });
   });
 
-  // it('fails to create an organization post with bad data', () => {
-  //   return request(app)
-  //     .post('/api/v1/organizations')
-  //     .send({
-  //       name: 'People Power Party (PPP)',
-  //       title: 'billionaires flaming trash pile of turds organization',
-  //       description: ['community led, funded, and supported'],
-  //       imageURL: 'image1.com'
-  //     })
-  //     .then(res => {
-  //       expect(res.body).toEqual({
-  //         status: 400,
-  //         message: 'Organization validation failed: title: `billionaires flaming trash pile of turds organization` is not a valid enum value for path `title`.'
-  //       });
-  //     });
-  // });
-
-  // it('can get all the organizations via GET', () => {
-  //   return Organization.create({
+  // it('can get all the polls via GET', () => {
+  //   return Poll.create({
   //     name: 'Redistribution United',
   //     title: 'community organization',
   //     description: ['defunds police and invests in schools and hospitals'],
