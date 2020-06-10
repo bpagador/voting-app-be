@@ -125,4 +125,25 @@ describe('voting-app-be routes', () => {
         });
       });
   });
+
+  it('deletes an organization by its id via DELETE', () => {
+    return Organization.create({
+      name: 'People Power Party (PPP)',
+      title: 'community organization',
+      description: ['community led, funded, and supported'],
+      imageURL: 'image1.com'
+    })
+
+      .then(organization => request(app).delete(`/api/v1/organizations/${organization._id}`))
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.anything(),
+          name: 'People Power Party (PPP)',
+          title: 'community organization',
+          description: ['community led, funded, and supported'],
+          imageURL: 'image1.com',
+          __v: 0
+        });
+      });
+  });
 });
