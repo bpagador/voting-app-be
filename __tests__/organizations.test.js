@@ -29,7 +29,7 @@ describe('voting-app-be routes', () => {
       .send({
         name: 'People Power Party (PPP)',
         title: 'community organization',
-        description: 'community led, funded, and supported',
+        description: ['community led, funded, and supported'],
         imageURL: 'image1.com'
       })
       .then(res => {
@@ -37,7 +37,7 @@ describe('voting-app-be routes', () => {
           _id: expect.anything(),
           name: 'People Power Party (PPP)',
           title: 'community organization',
-          description: 'community led, funded, and supported',
+          description: ['community led, funded, and supported'],
           imageURL: 'image1.com',
           __v: 0
         });
@@ -50,7 +50,7 @@ describe('voting-app-be routes', () => {
       .send({
         name: 'People Power Party (PPP)',
         title: 'billionaires flaming trash pile of turds organization',
-        description: 'community led, funded, and supported',
+        description: ['community led, funded, and supported'],
         imageURL: 'image1.com'
       })
       .then(res => {
@@ -65,7 +65,7 @@ describe('voting-app-be routes', () => {
     return Organization.create({
       name: 'Redistribution United',
       title: 'community organization',
-      description: 'defunds police and invests in schools and hospitals',
+      description: ['defunds police and invests in schools and hospitals'],
       imageURL: 'image2.com'
     })
       .then(() => request(app).get('/api/v1/organizations'))
@@ -78,5 +78,51 @@ describe('voting-app-be routes', () => {
       });
   });
 
-  // it('gets an organization by id bia GET')
+  it('gets an organization by id via GET', () => {
+    return Organization.create({
+      name: 'Black Leaders Alliance',
+      title: 'leaders coalition',
+      description: ['promotes Black leadership and initiatives'],
+      imageURL: 'image3.com'
+    })
+      .then(organization => request(app).get(`/api/v1/organizations/${organization._id}`))
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.anything(),
+          name: 'Black Leaders Alliance',
+          title: 'leaders coalition',
+          description: ['promotes Black leadership and initiatives'],
+          imageURL: 'image3.com',
+          __v: 0
+        });
+      });
+  });
+
+  it('updates an organization by its id via PATCH', () => {
+    return Organization.create({
+      name: 'Environment Law Party',
+      title: 'leaders coalition',
+      description: ['preserves lands and natural resources'],
+      imageURL: 'image4.com'
+    })
+
+      .then(organization => {
+        return request(app)
+          .patch(`/api/v1/organizations/${organization._id}`)
+          .send({ 
+            title: 'lawyers and bill writers', 
+            description: ['community led, funded, and supported', 'preserves lands and natural resources'] });
+      })
+
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.anything(),
+          name: 'Environment Law Party',
+          title: 'lawyers and bill writers',
+          description: ['community led, funded, and supported', 'preserves lands and natural resources'],
+          imageURL: 'image4.com',
+          __v: 0
+        });
+      });
+  });
 });
