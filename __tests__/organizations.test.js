@@ -8,7 +8,7 @@ const app = require('../lib/app');
 const Organization = require('../lib/models/Organization');
 
 
-describe('voting-app-be routes', () => {
+describe('org-voting-app-be routes', () => {
   beforeAll(async() => {
     const uri = await mongod.getUri();
     return connect(uri);
