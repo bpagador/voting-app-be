@@ -6,11 +6,12 @@ const connect = require('../lib/utils/connect');
 const request = require('supertest');
 const app = require('../lib/app');
 
-const Poll = require('../lib/models/Poll');
+const User = require('../lib/models/User');
 const Organization = require('../lib/models/Organization');
+const Membership = require('../lib/models/Membership');
 
 
-describe('poll routes', () => {
+describe('membership routes', () => {
   beforeAll(async() => {
     const uri = await mongod.getUri();
     return connect(uri);
@@ -30,47 +31,53 @@ describe('poll routes', () => {
     });
   });
 
+  let user;
+  beforeEach(async() => {
+    user = await User.create({
+      name: 'Briseida',
+      phone: '111-222-3344',
+      email: 'bp@gmail.com',
+      communicationMedium: ['phone'],
+      imageURL: 'imageB.com'
+    });
+  });
+  
+
   afterAll(async() => {
     await mongoose.connection.close();
     return mongod.stop();
   });
 
-  it('creates a poll via POST', () => {
+  it('creates a membership via POST', () => {
     return request(app)
-      .post('/api/v1/polls')
+      .post('/api/v1/memberships')
       .send({
         organization: organization._id,
-        title: 'Free Medical Services for Grades K-12',
-        description: 'reallocates police funding and applies it to free healthcare for all public school students',
-        option: ['Yes, fully support'],
-        imageURL: 'image1.com'
+        user: user._id
       })
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.anything(),
           organization: organization.id,
-          title: 'Free Medical Services for Grades K-12',
-          description: 'reallocates police funding and applies it to free healthcare for all public school students',
-          option: ['Yes, fully support'],
-          imageURL: 'image1.com',
+          user: user.id,
           __v: 0
         });
       });
   });
 
-  it('can get all the polls via GET', () => {
-    return Poll.create({
+  it.only('can get all the users in an organization by id via GET', async() => {
+    await Membership.create([{
       organization: organization._id,
-      title: 'Free Medical Services for Grades K-12',
-      description: 'reallocates police funding and applies it to free healthcare for all public school students',
-      option: ['Yes, fully support'],
-      imageURL: 'image1.com'
-    })
-      .then(() => request(app).get('/api/v1/polls'))
+      user: user._id
+    }, {
+      organization: organization._id,
+      user: user._id
+    }
+    ]);
+    return request(app).get(`/api/v1/memberships?organization=${organization.id}`)
       .then(res => {
         expect(res.body).toEqual([{
-          _id: expect.anything(),
-          title: 'Free Medical Services for Grades K-12',
+          _id: expect.anything
         }]);
       });
   });
