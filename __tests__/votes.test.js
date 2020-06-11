@@ -10,6 +10,7 @@ const User = require('../lib/models/User');
 const Organization = require('../lib/models/Organization');
 const Membership = require('../lib/models/Membership');
 const Poll = require('../lib/models/Poll');
+const Vote = require('../lib/models/Vote');
 
 
 describe('vote routes', () => {
@@ -75,6 +76,51 @@ describe('vote routes', () => {
         });
       });
   });
+
+  it('gets all votes by poll via GET', () => {
+    return Vote.create({
+      poll: poll._id,
+      user: user._id,
+      option: 'Yes'
+    })
+      .then(() => request(app).get(`/api/v1/votes?poll=${poll.id}`))
+      .then(res => {
+        expect(res.body).toEqual([{
+          _id: expect.anything(),
+          user: {
+            _id: user.id
+          },
+          poll: poll.id,
+          option: 'Yes',
+          __v:0
+
+        }]);
+      });
+  });
+
+  it('gets all votes by user via GET', () => {
+    return Vote.create({
+      poll: poll._id,
+      user: user._id,
+      option: 'Yes'
+    })
+      .then(() => request(app).get(`/api/v1/votes?user=${user.id}`))
+      .then(res => {
+        expect(res.body).toEqual([{
+          _id: expect.anything(),
+          user: {
+            _id: user.id
+          },
+          poll: poll.id,
+          option: 'Yes',
+          __v:0
+          
+        }]);
+      });
+  });
+
+
+
 
   // it('can get all the users part of an organization via GET', async() => {
   //   await Membership.create({
