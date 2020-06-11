@@ -56,87 +56,91 @@ describe('poll routes', () => {
       });
   });
 
-  // it('can get all the polls via GET', () => {
-  //   return Poll.create({
-  //     title: 'Free Medical Services for Grades K-12',
-  //     description: 'reallocates police funding and applies it to free healthcare for all public school students',
-  //     option: ['Yes, fully support']
-  //   })
-  //     .then(() => request(app).get('/api/v1/organizations'))
-  //     .then(res => {
-  //       expect(res.body).toEqual([{
-  //         _id: expect.anything(),
-  //         title: 'Free Medical Services for Grades K-12',
-  //       }]);
-  //     });
-  // });
+  it('can get all the polls via GET', () => {
+    return Poll.create({
+      organization: organization._id,
+      title: 'Free Medical Services for Grades K-12',
+      description: 'reallocates police funding and applies it to free healthcare for all public school students',
+      option: ['Yes, fully support']
+    })
+      .then(() => request(app).get('/api/v1/polls'))
+      .then(res => {
+        expect(res.body).toEqual([{
+          _id: expect.anything(),
+          title: 'Free Medical Services for Grades K-12',
+        }]);
+      });
+  });
 
-  // it('gets an organization by id via GET', () => {
-  //   return Organization.create({
-  //     name: 'Black Leaders Alliance',
-  //     title: 'leaders coalition',
-  //     description: ['promotes Black leadership and initiatives'],
-  //     imageURL: 'image3.com'
-  //   })
-  //     .then(organization => request(app).get(`/api/v1/organizations/${organization._id}`))
-  //     .then(res => {
-  //       expect(res.body).toEqual({
-  //         _id: expect.anything(),
-  //         name: 'Black Leaders Alliance',
-  //         title: 'leaders coalition',
-  //         description: ['promotes Black leadership and initiatives'],
-  //         imageURL: 'image3.com',
-  //         __v: 0
-  //       });
-  //     });
-  // });
+  it('gets a poll by id via GET', () => {
+    return Poll.create({
+      organization: organization._id,
+      title: 'Free Medical Services for Grades K-12',
+      description: 'reallocates police funding and applies it to free healthcare for all public school students',
+      option: ['Yes, fully support']
+    })
+      .then(poll => request(app).get(`/api/v1/polls/${poll._id}`))
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.anything(),
+          organization: {
+            _id: organization.id,
+            name: 'People Power Party (PPP)'
+          },
+          title: 'Free Medical Services for Grades K-12',
+          description: 'reallocates police funding and applies it to free healthcare for all public school students',
+          option: ['Yes, fully support'],
+          __v: 0
+        });
+      });
+  });
 
-  // it('updates an organization by its id via PATCH', () => {
-  //   return Organization.create({
-  //     name: 'Environment Law Party',
-  //     title: 'leaders coalition',
-  //     description: ['preserves lands and natural resources'],
-  //     imageURL: 'image4.com'
-  //   })
+  it('updates a poll by its id via PATCH', () => {
+    return Poll.create({
+      organization: organization._id,
+      title: 'Free Medical Services for Grades K-12',
+      description: 'reallocates police funding and applies it to free healthcare for all public school students',
+      option: ['Yes, fully support'],
+    })
 
-  //     .then(organization => {
-  //       return request(app)
-  //         .patch(`/api/v1/organizations/${organization._id}`)
-  //         .send({ 
-  //           title: 'lawyers and bill writers', 
-  //           description: ['community led, funded, and supported', 'preserves lands and natural resources'] });
-  //     })
+      .then(poll => {
+        return request(app)
+          .patch(`/api/v1/polls/${poll._id}`)
+          .send({ 
+            title: 'Mental Health Subsidies in the Workplace', 
+            description: '$500 subsidy towards mental health for every uninsured ' });
+      })
 
-  //     .then(res => {
-  //       expect(res.body).toEqual({
-  //         _id: expect.anything(),
-  //         name: 'Environment Law Party',
-  //         title: 'lawyers and bill writers',
-  //         description: ['community led, funded, and supported', 'preserves lands and natural resources'],
-  //         imageURL: 'image4.com',
-  //         __v: 0
-  //       });
-  //     });
-  // });
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.anything(),
+          organization: organization.id,
+          title: 'Mental Health Subsidies in the Workplace', 
+          description: '$500 subsidy towards mental health for every uninsured ',
+          option: ['Yes, fully support'],
+          __v: 0
+        });
+      });
+  });
 
-  // it('deletes an organization by its id via DELETE', () => {
-  //   return Organization.create({
-  //     name: 'People Power Party (PPP)',
-  //     title: 'community organization',
-  //     description: ['community led, funded, and supported'],
-  //     imageURL: 'image1.com'
-  //   })
+  it('deletes a poll by its id via DELETE', () => {
+    return Poll.create({
+      organization: organization._id,
+      title: 'Free Medical Services for Grades K-12',
+      description: 'reallocates police funding and applies it to free healthcare for all public school students',
+      option: ['Yes, fully support'],
+    })
 
-  //     .then(organization => request(app).delete(`/api/v1/organizations/${organization._id}`))
-  //     .then(res => {
-  //       expect(res.body).toEqual({
-  //         _id: expect.anything(),
-  //         name: 'People Power Party (PPP)',
-  //         title: 'community organization',
-  //         description: ['community led, funded, and supported'],
-  //         imageURL: 'image1.com',
-  //         __v: 0
-  //       });
-  //     });
-  // });
+      .then(poll => request(app).delete(`/api/v1/polls/${poll._id}`))
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.anything(),
+          organization: organization.id,
+          title: 'Free Medical Services for Grades K-12',
+          description: 'reallocates police funding and applies it to free healthcare for all public school students',
+          option: ['Yes, fully support'],
+          __v: 0
+        });
+      });
+  });
 });
