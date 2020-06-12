@@ -119,6 +119,27 @@ describe('vote routes', () => {
       });
   });
 
+  it('gets all votes by its id via GET', () => {
+    return Vote.create({
+      poll: poll._id,
+      user: user._id,
+      option: 'Yes'
+    })
+      .then(vote => request(app).get(`/api/v1/votes/${vote._id}`))
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.anything(),
+          user: {
+            _id: user.id
+          },
+          poll: poll.id,
+          option: 'Yes',
+          __v:0
+          
+        });
+      });
+  });
+
 
 
 
