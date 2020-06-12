@@ -76,6 +76,31 @@ describe('vote routes', () => {
       });
   });
 
+  it('updates a vote if it already exists via POST', async() => {
+
+    const vote = await Vote.create ({
+      poll: poll._id,
+      user: user._id,
+      option: 'No'
+    });
+    return request(app)
+      .post('/api/v1/votes')
+      .send({
+        poll: poll._id,
+        user: user._id,
+        option: 'Yes'
+      })
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: vote.id,
+          poll: poll.id,
+          user: user.id,
+          option: 'Yes',
+          __v: 0
+        });
+      });
+  });
+
   it('gets all votes by poll via GET', () => {
     return Vote.create({
       poll: poll._id,

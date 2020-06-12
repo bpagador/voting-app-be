@@ -81,7 +81,7 @@ describe('org-voting-app-be routes', () => {
       });
   });
 
-  it('gets an organization by id via GET', () => {
+  it('gets an organization and its members by id via GET', () => {
     return Organization.create({
       name: 'Black Leaders Alliance',
       title: 'leaders coalition',
@@ -92,6 +92,8 @@ describe('org-voting-app-be routes', () => {
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.anything(),
+          id: expect.anything(), //id virtual
+          memberships: [],
           name: 'Black Leaders Alliance',
           title: 'leaders coalition',
           description: ['promotes Black leadership and initiatives'],

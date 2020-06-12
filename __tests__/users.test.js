@@ -23,7 +23,7 @@ describe('user-voting-app-be routes', () => {
     return mongod.stop();
   });
 
-  it('gets user info by id via GET', () => {
+  it('gets user info and all organizations they are a part of by id via GET', () => {
     return User.create({
       name: 'Briseida',
       phone: '111-222-3344',
@@ -35,6 +35,8 @@ describe('user-voting-app-be routes', () => {
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.anything(),
+          id: expect.anything(),
+          memberships: [],
           name: 'Briseida',
           phone: '111-222-3344',
           email: 'bp@gmail.com',
