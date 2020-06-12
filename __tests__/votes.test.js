@@ -140,54 +140,22 @@ describe('vote routes', () => {
       });
   });
 
-
-
-
-  // it('can get all the users part of an organization via GET', async() => {
-  //   await Membership.create({
-  //     organization: organization._id,
-  //     user: user._id
-  //   });
-  //   return request(app).get(`/api/v1/memberships?organization=${organization._id}`)
-  //     .then(res => {
-  //       expect(res.body).toEqual([{ 
-  //         '__v': 0, 
-  //         '_id': expect.anything(), 
-  //         'organization': { '_id': expect.anything(), 'title': 'community organization', 'imageURL': 'image1.com'  }, 
-  //         'user': { '_id': expect.anything(), 'name': 'Briseida', 'imageURL': 'imageB.com' } }]
-  //       );
-  //     });
-  // });
-
-  // it('can get all the organizations the user is a part of via GET', async() => {
-  //   await Membership.create({
-  //     organization: organization._id,
-  //     user: user._id
-  //   });
-  //   return request(app).get(`/api/v1/memberships?user=${user._id}`)
-  //     .then(res => {
-  //       expect(res.body).toEqual([{ 
-  //         '__v': 0, 
-  //         '_id': expect.anything(), 
-  //         'organization': { '_id': expect.anything(), 'title': 'community organization', 'imageURL': 'image1.com'  }, 
-  //         'user': { '_id': expect.anything(), 'name': 'Briseida', 'imageURL': 'imageB.com' } }]
-  //       );
-  //     });
-  // });
-
-  // it('deletes a membership DELETE', () => {
-  //   return Membership.create({
-  //     organization: organization._id,
-  //     user: user._id
-  //   })
-  //     .then(member => request(app).delete(`/api/v1/memberships/${member.id}`))
-  //     .then(res => {
-  //       expect(res.body).toEqual({
-  //         _id: expect.anything(),
-  //         organization: organization.id,
-  //         user: user.id,
-  //         __v: 0
-  //       });
-  //     });
-  // });
+  it('deletes a vote by its id via GET', () => {
+    return Vote.create({
+      poll: poll._id,
+      user: user._id,
+      option: 'Yes'
+    })
+      .then(vote => request(app).delete(`/api/v1/votes/${vote._id}`))
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.anything(),
+          user: user.id,
+          poll: poll.id,
+          option: 'Yes',
+          __v:0
+          
+        });
+      });
+  });
 });
