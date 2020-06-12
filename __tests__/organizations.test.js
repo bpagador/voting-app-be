@@ -5,6 +5,9 @@ const connect = require('../lib/utils/connect');
 
 const request = require('supertest');
 const app = require('../lib/app');
+const Poll = require('../lib/models/Poll');
+const User = require('../lib/models/User');
+const Vote = require('../lib/models/Vote');
 const Organization = require('../lib/models/Organization');
 
 
@@ -126,15 +129,50 @@ describe('org-voting-app-be routes', () => {
       });
   });
 
-  it('deletes an organization by its id via DELETE', () => {
-    return Organization.create({
+  it('deletes an organization and all its polls and votes by id via DELETE', async() => {
+    const organization = await Organization.create({
       name: 'People Power Party (PPP)',
       title: 'community organization',
       description: ['community led, funded, and supported'],
       imageURL: 'image1.com'
-    })
+    });
 
-      .then(organization => request(app).delete(`/api/v1/organizations/${organization._id}`))
+    const poll = await Poll.create({
+      organization: organization._id,
+      title: 'Free Medical Services for Grades K-12',
+      description: 'reallocates police funding and applies it to free healthcare for all public school students',
+      option: ['Yes', 'No'],
+      imageURL: 'image1.com'
+    });
+
+    const poll2 = await Poll.create({
+      organization: organization._id,
+      title: 'Mental Health Subsidies in the Workplace', 
+      description: '$500 subsidy towards mental health for every uninsured ',
+      option: ['Yes', 'No'],
+      imageURL: 'image1.com',
+    });
+
+    const user = await User.create({
+      name: 'Briseida',
+      phone: '111-222-3344',
+      email: 'bp@gmail.com',
+      communicationMedium: ['phone'],
+      imageURL: 'imageB.com'
+    });
+
+    await Vote.create([{
+      poll: poll._id,
+      user: user._id,
+      option: 'Yes'
+    }, {
+      poll: poll2._id,
+      user: user._id,
+      option: 'Yes'
+    }]);
+  
+    return request(app)
+      .delete(`/api/v1/organizations/${organization._id}`)
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.anything(),
@@ -144,6 +182,12 @@ describe('org-voting-app-be routes', () => {
           imageURL: 'image1.com',
           __v: 0
         });
+        
+        return Poll.find({ organization: organization._id });
+      })
+      .then(polls => {
+        expect(polls).toEqual([]);
       });
   });
 });
+

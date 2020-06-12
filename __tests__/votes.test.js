@@ -87,9 +87,23 @@ describe('vote routes', () => {
         expect(res.body).toEqual([{
           _id: expect.anything(),
           user: {
-            _id: user.id
+            _id: user.id,
+            name: 'Briseida',
+            phone: '111-222-3344',
+            email: 'bp@gmail.com',
+            communicationMedium: ['phone'],
+            imageURL: 'imageB.com',
+            __v: 0
           },
-          poll: poll.id,
+          poll: {
+            _id: poll.id,
+            organization: organization.id,
+            title: 'Free Medical Services for Grades K-12',
+            description: 'reallocates police funding and applies it to free healthcare for all public school students',
+            option: ['Yes', 'No', 'Undecided'],
+            imageURL: 'image1.com',
+            __v: 0
+          },
           option: 'Yes',
           __v:0
 
@@ -108,9 +122,23 @@ describe('vote routes', () => {
         expect(res.body).toEqual([{
           _id: expect.anything(),
           user: {
-            _id: user.id
+            _id: user.id,
+            name: 'Briseida',
+            phone: '111-222-3344',
+            email: 'bp@gmail.com',
+            communicationMedium: ['phone'],
+            imageURL: 'imageB.com',
+            __v: 0
           },
-          poll: poll.id,
+          poll: {
+            _id: poll.id,
+            organization: organization.id,
+            title: 'Free Medical Services for Grades K-12',
+            description: 'reallocates police funding and applies it to free healthcare for all public school students',
+            option: ['Yes', 'No', 'Undecided'],
+            imageURL: 'image1.com',
+            __v: 0
+          },
           option: 'Yes',
           __v:0
           
@@ -129,9 +157,23 @@ describe('vote routes', () => {
         expect(res.body).toEqual({
           _id: expect.anything(),
           user: {
-            _id: user.id
+            _id: user.id,
+            name: 'Briseida',
+            phone: '111-222-3344',
+            email: 'bp@gmail.com',
+            communicationMedium: ['phone'],
+            imageURL: 'imageB.com',
+            __v: 0
           },
-          poll: poll.id,
+          poll: {
+            _id: poll.id,
+            organization: organization.id,
+            title: 'Free Medical Services for Grades K-12',
+            description: 'reallocates police funding and applies it to free healthcare for all public school students',
+            option: ['Yes', 'No', 'Undecided'],
+            imageURL: 'image1.com',
+            __v: 0
+          },
           option: 'Yes',
           __v:0
           
