@@ -8,7 +8,6 @@ const app = require('../lib/app');
 
 const User = require('../lib/models/User');
 const Organization = require('../lib/models/Organization');
-const Membership = require('../lib/models/Membership');
 const Poll = require('../lib/models/Poll');
 const Vote = require('../lib/models/Vote');
 
