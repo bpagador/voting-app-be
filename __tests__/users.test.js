@@ -7,6 +7,8 @@ const request = require('supertest');
 const app = require('../lib/app');
 const User = require('../lib/models/User');
 
+require('dotenv').config();
+
 
 describe('user-voting-app-be routes', () => {
   beforeAll(async() => {
@@ -22,6 +24,31 @@ describe('user-voting-app-be routes', () => {
     await mongoose.connection.close();
     return mongod.stop();
   });
+
+  it.only('can sign up a new user via POST', () => {
+    return request(app)
+      .post('/api/v1/users/signup')
+      .send({
+        name: 'Briseida',
+        phone: '111-222-3344',
+        email:'bp@gmail.com',
+        password: 'testpassword',
+        communicationMedium: ['phone'],
+        imageURL: 'imageB.com'
+      })
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.anything(),
+          name: 'Briseida',
+          phone: '111-222-3344',
+          email:'bp@gmail.com',
+          communicationMedium: ['phone'],
+          imageURL: 'imageB.com',
+          __v: 0
+        });
+      });
+  });
+
 
   it('gets user info and all organizations they are a part of by id via GET', () => {
     return User.create({
