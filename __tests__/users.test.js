@@ -20,12 +20,25 @@ describe('user-voting-app-be routes', () => {
     return mongoose.connection.dropDatabase();
   });
 
+  let user;
+
+  beforeEach(async() => {
+    user = await User.create({
+      name: 'Briseida',
+      phone: '111-222-3344',
+      email: 'bp@gmail.com',
+      password: 'testpassword',
+      communicationMedium: ['phone'],
+      imageURL: 'imageB.com'
+    });
+  });
+
   afterAll(async() => {
     await mongoose.connection.close();
     return mongod.stop();
   });
 
-  it.only('can sign up a new user via POST', () => {
+  it('can sign up a new user via POST', () => {
     return request(app)
       .post('/api/v1/users/signup')
       .send({
@@ -49,24 +62,73 @@ describe('user-voting-app-be routes', () => {
       });
   });
 
+  it('can login a user via POST', async() => {
 
-  it('gets user info and all organizations they are a part of by id via GET', () => {
-    return User.create({
-      name: 'Briseida',
-      phone: '111-222-3344',
-      email: 'bp@gmail.com',
-      communicationMedium: ['phone'],
-      imageURL: 'imageB.com'
-    })
-      .then(user => request(app).get(`/api/v1/users/${user._id}`))
+    return request(app)
+      .post('/api/v1/users/login')
+      .send({
+        email:'bp@gmail.com',
+        password: 'testpassword'
+      })
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.anything(),
-          id: expect.anything(),
-          memberships: [],
           name: 'Briseida',
           phone: '111-222-3344',
-          email: 'bp@gmail.com',
+          email:'bp@gmail.com',
+          communicationMedium: ['phone'],
+          imageURL: 'imageB.com',
+          __v: 0
+        });
+      });
+  });
+
+  it('can verify a user via GET', () => {
+    const agent = request.agent(app);
+
+    return agent
+      .post('/api/v1/users/login')
+      .send({
+        email:'bp@gmail.com',
+        password: 'testpassword'
+      })
+      .then(() => {
+        return agent
+          .get('/api/v1/users/verify');
+      })
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: user.id,
+          name: 'Briseida',
+          phone: '111-222-3344',
+          email:'bp@gmail.com',
+          communicationMedium: ['phone'],
+          imageURL: 'imageB.com',
+          __v: 0
+        });
+      });
+  });
+
+
+  it('gets user info and all organizations they are a part of by id via GET', () => {
+    const agent = request.agent(app);
+
+    return agent
+      .post('/api/v1/users/login')
+      .send({
+        email:'bp@gmail.com',
+        password: 'testpassword'
+      })
+      .then(() => agent
+        .get(`/api/v1/users/${user._id}`)
+      )
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: user.id,
+          name: 'Briseida',
+          phone: '111-222-3344',
+          memberships: [], //gets organizations bc membership holds orgs
+          email:'bp@gmail.com',
           communicationMedium: ['phone'],
           imageURL: 'imageB.com',
           __v: 0
@@ -75,28 +137,24 @@ describe('user-voting-app-be routes', () => {
   });
 
   it('updates user info by its id via PATCH', () => {
-    return User.create({
-      name: 'Briseida',
-      phone: '111-222-3344',
-      email: 'bp@gmail.com',
-      communicationMedium: ['phone'],
-      imageURL: 'imageB.com'
-    })
+    const agent = request.agent(app);
 
-      .then(user => {
-        return request(app)
-          .patch(`/api/v1/users/${user._id}`)
-          .send({ 
-            name: 'Bob', 
-            email: 'bob@bob.com' });
+    return agent
+      .post('/api/v1/users/login')
+      .send({
+        email:'bp@gmail.com',
+        password: 'testpassword'
       })
-
+      .then(() => agent
+        .patch(`/api/v1/users/${user._id}`)
+        .send({ name: 'Bob' })
+      )
       .then(res => {
         expect(res.body).toEqual({
-          _id: expect.anything(),
+          _id: user.id,
           name: 'Bob',
           phone: '111-222-3344',
-          email: 'bob@bob.com',
+          email:'bp@gmail.com',
           communicationMedium: ['phone'],
           imageURL: 'imageB.com',
           __v: 0
@@ -105,26 +163,27 @@ describe('user-voting-app-be routes', () => {
   });
 
   it('deletes a user by its id via DELETE', () => {
-    return User.create({
-      name: 'Bob',
-      phone: '111-222-3344',
-      email: 'bob@bob.com',
-      communicationMedium: ['phone'],
-      imageURL: 'imageB.com'
-    })
+    const agent = request.agent(app);
 
-      .then(user => request(app).delete(`/api/v1/users/${user._id}`))
+    return agent
+      .post('/api/v1/users/login')
+      .send({
+        email:'bp@gmail.com',
+        password: 'testpassword'
+      })
+      .then(() => agent
+        .delete(`/api/v1/users/${user._id}`)
+      )
       .then(res => {
         expect(res.body).toEqual({
-          _id: expect.anything(),
-          name: 'Bob',
+          _id: user.id,
+          name: 'Briseida',
           phone: '111-222-3344',
-          email: 'bob@bob.com',
+          email:'bp@gmail.com',
           communicationMedium: ['phone'],
           imageURL: 'imageB.com',
           __v: 0
         });
       });
   });
-  // little comment to test ssh key, and another, and one final one, maybe
 });
